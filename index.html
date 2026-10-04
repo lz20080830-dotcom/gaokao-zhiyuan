@@ -9,6 +9,11 @@
 <meta property="og:description" content="选省份、填分数，智能匹配电力/铁路/民航/公安/军士/医学定向等69个稳定就业项目，冲稳保三档推荐。">
 <meta property="og:type" content="website">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%8E%93%3C/text%3E%3C/svg%3E">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="志愿助手">
 <title>高考志愿查询助手 · 订单班搜索工具</title>
 <style>
 :root{
@@ -590,6 +595,8 @@ function browseAll(){
 }
 
 initProv();initChips();
+/* PWA */
+if('serviceWorker' in navigator&&location.protocol==='https:'){navigator.serviceWorker.register('./sw.js').catch(function(){})}
 </script>
 </body>
 </html>
