@@ -1,0 +1,595 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="description" content="高考志愿查询助手：订单班/定向培养/稳定就业院校查询，冲稳保三档智能匹配，用工性质、服务年限、违约风险一目了然。69个项目覆盖260-665分，31省政策速览。">
+<meta name="theme-color" content="#1d4ed8">
+<meta property="og:title" content="高考志愿查询助手 · 订单班冲稳保匹配">
+<meta property="og:description" content="选省份、填分数，智能匹配电力/铁路/民航/公安/军士/医学定向等69个稳定就业项目，冲稳保三档推荐。">
+<meta property="og:type" content="website">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%8E%93%3C/text%3E%3C/svg%3E">
+<title>高考志愿查询助手 · 订单班搜索工具</title>
+<style>
+:root{
+  --blue:#3b82f6; --blue-d:#1d4ed8; --blue-l:#dbeafe;
+  --chong:#ef4444; --wen:#f59e0b; --bao:#10b981;
+  --txt:#1e293b; --txt2:#64748b; --bg:#f1f5f9; --line:#e2e8f0;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;background:var(--bg);color:var(--txt);line-height:1.6}
+.wrap{max-width:760px;margin:0 auto;padding:0 14px 90px}
+
+/* ===== 顶部 ===== */
+.hero{background:linear-gradient(135deg,#2563eb 0%,#1d4ed8 60%,#1e40af 100%);border-radius:0 0 26px 26px;color:#fff;padding:26px 18px 22px;text-align:center}
+.hero h1{font-size:23px;letter-spacing:1px}
+.hero p{font-size:13px;opacity:.85;margin-top:5px}
+.icons{display:flex;justify-content:center;gap:26px;margin-top:18px}
+.icons div{display:flex;flex-direction:column;align-items:center;gap:6px;font-size:12px;cursor:pointer;opacity:.95}
+.icons span{width:46px;height:46px;border-radius:50%;background:rgba(255,255,255,.18);display:flex;align-items:center;justify-content:center;font-size:21px;transition:.2s}
+.icons div:active span{transform:scale(.9)}
+
+/* ===== 卡片 ===== */
+.card{background:#fff;border-radius:16px;padding:16px;margin-top:14px;box-shadow:0 1px 4px rgba(15,23,42,.06)}
+.card h3{font-size:16px;margin-bottom:12px;display:flex;align-items:center;gap:6px}
+.field{margin-bottom:12px}
+.field label{font-size:13px;color:var(--txt2);display:block;margin-bottom:5px}
+select,input{width:100%;padding:10px 12px;border:1.5px solid var(--line);border-radius:10px;font-size:15px;background:#fff;color:var(--txt);outline:none}
+select:focus,input:focus{border-color:var(--blue)}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.chips{display:flex;flex-wrap:wrap;gap:7px}
+.chip{padding:5px 11px;border-radius:999px;border:1.5px solid var(--line);font-size:12.5px;cursor:pointer;color:var(--txt2);background:#fff;transition:.15s}
+.chip.on{background:var(--blue);border-color:var(--blue);color:#fff}
+.btn{display:block;width:100%;padding:12px;border:none;border-radius:12px;background:linear-gradient(90deg,#3b82f6,#2563eb);color:#fff;font-size:16px;font-weight:600;letter-spacing:2px;cursor:pointer;margin-top:6px}
+.btn:active{opacity:.85}
+.link{display:block;text-align:center;color:var(--blue);font-size:13px;margin-top:11px;cursor:pointer}
+
+/* 省份政策 */
+.policy{background:var(--blue-l);border-radius:12px;padding:12px 14px;font-size:13px;margin-bottom:12px}
+.policy b{color:var(--blue-d)}
+.policy .row{display:flex;gap:8px;margin-top:4px}
+.policy .tag{background:#fff;border-radius:6px;padding:1px 8px;color:var(--blue-d);font-size:12px;white-space:nowrap}
+.policy a{color:var(--blue-d)}
+
+/* ===== 结果 ===== */
+.sumbar{display:flex;gap:10px;margin:4px 0 12px}
+.sumbar div{flex:1;border-radius:12px;padding:10px 6px;text-align:center;color:#fff}
+.sumbar .s1{background:linear-gradient(135deg,#f87171,#dc2626)}
+.sumbar .s2{background:linear-gradient(135deg,#fbbf24,#d97706)}
+.sumbar .s3{background:linear-gradient(135deg,#34d399,#059669)}
+.sumbar b{display:block;font-size:21px}
+.sumbar span{font-size:12px;opacity:.95}
+
+.tier{margin:16px 0 8px;display:flex;align-items:center;gap:8px;font-size:15px;font-weight:700}
+.dot{width:10px;height:10px;border-radius:50%}
+.tier small{font-weight:400;color:var(--txt2);font-size:12px}
+
+.item{background:#fff;border-radius:14px;padding:14px;margin-bottom:11px;box-shadow:0 1px 4px rgba(15,23,42,.06);border-left:4px solid transparent}
+.item.chong{border-left-color:var(--chong)}
+.item.wen{border-left-color:var(--wen)}
+.item.bao{border-left-color:var(--bao)}
+.item .top{display:flex;justify-content:space-between;gap:8px;align-items:flex-start}
+.item h4{font-size:15.5px}
+.item .maj{font-size:13px;color:var(--txt2);margin-top:1px}
+.item .sc{white-space:nowrap;font-weight:700;color:var(--blue-d);font-size:14px}
+.badges{display:flex;flex-wrap:wrap;gap:6px;margin-top:9px}
+.bd{font-size:11.5px;padding:2px 9px;border-radius:999px;background:#f1f5f9;color:var(--txt2)}
+.bd.emp{background:#dcfce7;color:#15803d}
+.bd.emp2{background:#e0f2fe;color:#0369a1}
+.bd.emp3{background:#fef3c7;color:#b45309}
+.bd.emp4{background:#fee2e2;color:#b91c1c}
+.bd.lv{background:#ede9fe;color:#6d28d9}
+.acts{display:flex;gap:8px;margin-top:11px}
+.acts button{flex:1;padding:7px 0;border-radius:9px;border:1.5px solid var(--blue);background:#fff;color:var(--blue);font-size:13px;cursor:pointer}
+.acts button.main{background:var(--blue);color:#fff}
+.empty{text-align:center;color:var(--txt2);font-size:13.5px;padding:22px 0}
+
+/* 浏览全部 */
+.bgroup{margin-bottom:6px}
+.bgroup h4{font-size:14px;margin:12px 0 8px;color:var(--blue-d)}
+
+/* ===== 模拟方案 ===== */
+.planitem{display:flex;justify-content:space-between;align-items:center;background:#f8fafc;border-radius:10px;padding:9px 12px;margin-bottom:8px;font-size:13.5px}
+.planitem .del{color:#ef4444;cursor:pointer;font-size:16px;padding:0 3px}
+.risk{border-radius:12px;padding:13px 15px;font-size:13.5px;margin-top:6px}
+.risk.high{background:#fee2e2;color:#991b1b}
+.risk.mid{background:#fef3c7;color:#92400e}
+.risk.low{background:#dcfce7;color:#166534}
+.risk b{font-size:15px}
+
+/* 底部提醒 */
+.notice{background:#fffbeb;border:1px solid #fde68a;border-radius:12px;padding:13px 15px;font-size:12.5px;color:#92400e;margin-top:16px}
+.notice li{margin:5px 0 0 18px}
+footer{text-align:center;font-size:11.5px;color:var(--txt2);margin-top:18px;line-height:1.8}
+
+/* ===== 弹窗 ===== */
+.mask{position:fixed;inset:0;background:rgba(15,23,42,.5);z-index:50;display:none;align-items:flex-end;justify-content:center}
+.mask.show{display:flex}
+.sheet{background:#fff;width:100%;max-width:760px;border-radius:20px 20px 0 0;max-height:86vh;overflow-y:auto;padding:18px 16px 30px}
+.sheet h3{font-size:17px;margin-bottom:4px;padding-right:30px}
+.sheet .close{position:absolute;right:14px;top:12px;font-size:22px;color:var(--txt2);cursor:pointer;background:none;border:none}
+.sheetwrap{position:relative}
+.dl{margin:10px 0;font-size:13.5px}
+.dl dt{color:var(--txt2);font-size:12.5px;margin-top:9px}
+.dl dd{margin-top:1px}
+.dl ul{margin-left:18px}
+.dl li{margin-top:2px}
+table.cmp{width:100%;border-collapse:collapse;font-size:12.5px}
+table.cmp th,table.cmp td{border:1px solid var(--line);padding:7px 8px;text-align:left;vertical-align:top}
+table.cmp th{background:#f8fafc;white-space:nowrap;width:86px}
+.cmpbar{position:fixed;bottom:0;left:0;right:0;background:#fff;box-shadow:0 -3px 12px rgba(15,23,42,.1);padding:10px 16px;z-index:40;display:none;align-items:center;gap:10px;max-width:760px;margin:0 auto}
+.cmpbar.show{display:flex}
+.cmpbar .txt{flex:1;font-size:13px}
+.cmpbar button{padding:9px 18px;border-radius:10px;border:none;background:var(--blue);color:#fff;font-size:14px;cursor:pointer}
+
+/* toast */
+#toast{position:fixed;top:14%;left:50%;transform:translateX(-50%);background:rgba(15,23,42,.85);color:#fff;padding:9px 20px;border-radius:999px;font-size:13.5px;z-index:99;display:none;max-width:80vw;text-align:center}
+.hidden{display:none!important}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="hero">
+    <h1>🎓 高考志愿查询助手</h1>
+    <p>智能匹配适合你的订单班 · 冲稳保策略 · 就业避坑</p>
+    <div class="icons">
+      <div onclick="scrollToId('queryCard')"><span>🔍</span>快速匹配</div>
+      <div onclick="scrollToId('resultSec')"><span>🎯</span>冲稳保</div>
+      <div onclick="scrollToId('planSec')"><span>📋</span>模拟报考</div>
+      <div onclick="scrollToId('tipsSec')"><span>🛡️</span>避坑指南</div>
+    </div>
+  </header>
+
+  <!-- 查询卡片 -->
+  <section class="card" id="queryCard">
+    <h3>🔎 开始查询</h3>
+    <div id="policyBox"></div>
+    <div class="row2">
+      <div class="field"><label>省份</label><select id="prov"></select></div>
+      <div class="field"><label>高考分数（0-750）</label><input id="score" type="number" min="0" max="750" placeholder="如 520"></div>
+    </div>
+    <div class="row2">
+      <div class="field"><label>选科 / 科类</label>
+        <select id="subj">
+          <option value="physics">物理类 / 理科</option>
+          <option value="history">历史类 / 文科</option>
+        </select>
+      </div>
+      <div class="field"><label>层次</label>
+        <select id="level">
+          <option value="all">本科 + 专科</option>
+          <option value="本科">仅本科</option>
+          <option value="专科">仅专科</option>
+        </select>
+      </div>
+    </div>
+    <div class="field"><label>方向（可多选，不选=全部）</label><div class="chips" id="domChips"></div></div>
+    <div class="field"><label>项目类型</label>
+      <div class="chips" id="typeChips">
+        <div class="chip on" data-v="all">全部</div>
+        <div class="chip" data-v="订单班">订单班</div>
+        <div class="chip" data-v="定向培养">定向培养</div>
+        <div class="chip" data-v="就业大户">就业大户（非锁定）</div>
+      </div>
+    </div>
+    <button class="btn" onclick="doQuery()">开始查询</button>
+    <a class="link" onclick="browseAll()">先看看有什么可报读 →</a>
+  </section>
+
+  <!-- 结果 -->
+  <section id="resultSec">
+    <div class="sumbar hidden" id="sumbar">
+      <div class="s1"><b id="nC">0</b><span>🔴 冲刺</span></div>
+      <div class="s2"><b id="nW">0</b><span>🟡 稳妥</span></div>
+      <div class="s3"><b id="nB">0</b><span>🟢 保底</span></div>
+    </div>
+    <div id="resultBox"></div>
+  </section>
+
+  <!-- 浏览全部 -->
+  <section id="browseSec" class="hidden"><div id="browseBox"></div></section>
+
+  <!-- 模拟方案 -->
+  <section class="card hidden" id="planSec">
+    <h3>📋 我的模拟志愿方案</h3>
+    <div id="planBox"></div>
+    <div id="riskBox"></div>
+  </section>
+
+  <!-- 避坑指南 -->
+  <section class="notice" id="tipsSec">
+    <b>⚠️ 订单班 / 定向培养必读提醒</b>
+    <li>订单班 ≠ 铁饭碗：通常有 <b>5-8 年服务期</b>，期满才可自由流动</li>
+    <li><b>正式编制 vs 劳务派遣</b> 差别巨大，报名前务必向招生办问清用工性质</li>
+    <li>违约成本高：可能面临赔偿、记入诚信档案、影响考公考编</li>
+    <li>军警、民航、航海、铁路类对视力 / 身高 / 身体条件有硬性要求</li>
+    <li>部分订单班限定就业地区，报考前确认能否接受</li>
+    <li>有的需提前政审、体检、面试，有的按普通批直接录取</li>
+  </section>
+
+  <footer>
+    数据整理于 2026-10 · 参考分基于 2025/2026 年各省公开投档数据及院校招生信息<br>
+    仅供参考，不构成报考依据 · 最终以省教育考试院与院校招生办公布为准
+  </footer>
+</div>
+
+<!-- 详情弹窗 -->
+<div class="mask" id="detailMask" onclick="if(event.target===this)closeM('detailMask')">
+  <div class="sheet sheetwrap">
+    <button class="close" onclick="closeM('detailMask')">×</button>
+    <h3 id="dTitle"></h3>
+    <div style="font-size:13px;color:var(--txt2)" id="dSub"></div>
+    <dl class="dl" id="dBody"></dl>
+    <div class="acts" id="dActs"></div>
+  </div>
+</div>
+
+<!-- 对比弹窗 -->
+<div class="mask" id="cmpMask" onclick="if(event.target===this)closeM('cmpMask')">
+  <div class="sheet sheetwrap">
+    <button class="close" onclick="closeM('cmpMask')">×</button>
+    <h3>📊 横向对比（最多 3 个）</h3>
+    <div id="cmpBody" style="margin-top:10px;overflow-x:auto"></div>
+  </div>
+</div>
+
+<!-- 对比浮动条 -->
+<div class="cmpbar" id="cmpbar">
+  <div class="txt" id="cmpbarTxt"></div>
+  <button onclick="openCmp()">对比</button>
+  <button style="background:#94a3b8" onclick="clearCmp()">清空</button>
+</div>
+<div id="toast"></div>
+
+<script>
+/* ================= 数据：31 省政策 ================= */
+const PROVINCES=[
+{n:'北京',mode:'院校专业组（3+3）',vol:'本科普通批 30 个院校专业组志愿',time:'6月底—7月初',line:'2026年：本科线 429 / 特控线 521',lk:'https://www.bjeea.cn'},
+{n:'天津',mode:'院校专业组（3+3）',vol:'本科批A段约 50 个院校专业组志愿',time:'6月底',line:'以天津招考资讯网公布为准',lk:'http://www.zhaokao.net'},
+{n:'上海',mode:'院校专业组（3+3）',vol:'本科普通批 24 个院校专业组志愿；综评批 4 个',time:'6月底—7月初',line:'2026年：本科线 403 / 特控线 504',lk:'https://www.shmeea.edu.cn'},
+{n:'重庆',mode:'专业(类)+院校',vol:'本科批 96 个专业平行志愿',time:'6月底—7月初',line:'以市教育考试院公布为准',lk:'https://www.cqksy.cn'},
+{n:'河北',mode:'专业(类)+院校',vol:'本科批 96 个专业平行志愿',time:'6月底',line:'2026年参考：历史本科 479 / 物理 412（以官方为准）',lk:'http://www.hebeea.edu.cn'},
+{n:'山西',mode:'院校专业组（3+1+2）',vol:'本科批 45 个院校专业组 × 6 专业 + 服从调剂',time:'6月底—7月初',line:'以省考试院公布为准',lk:'http://www.sxkszx.cn'},
+{n:'内蒙古',mode:'院校专业组（3+1+2）',vol:'以当年公布为准',time:'6月底',line:'2026特控线：物理 487 / 历史 523',lk:'https://nm.zsks.cn'},
+{n:'辽宁',mode:'专业(类)+院校（3+1+2）',vol:'本科批 112 个专业平行志愿',time:'6月底',line:'以省招考办公布为准',lk:'https://www.lnzsks.com'},
+{n:'吉林',mode:'院校专业组（3+1+2）',vol:'本科批约 40 个院校专业组志愿',time:'6月底',line:'以省教育考试院公布为准',lk:'http://www.jleea.com.cn'},
+{n:'黑龙江',mode:'院校专业组（3+1+2）',vol:'本科批约 40 个院校专业组志愿',time:'6月底',line:'2026特控线：物理 437 / 历史 474',lk:'https://www.hljea.org'},
+{n:'江苏',mode:'院校专业组（3+1+2）',vol:'本科批 30 个院校专业组 × 6 专业',time:'6月底—7月初',line:'以省教育考试院公布为准',lk:'https://www.jseea.cn'},
+{n:'浙江',mode:'专业平行志愿（3+3）',vol:'普通类最多 80 个专业志愿',time:'6月底—7月初',line:'以省教育考试院公布为准',lk:'https://www.zjzs.net'},
+{n:'安徽',mode:'院校专业组（3+1+2）',vol:'本科批 45 个院校专业组志愿',time:'6月底',line:'以省考试院公布为准',lk:'https://www.ahzsks.cn'},
+{n:'福建',mode:'院校专业组（3+1+2）',vol:'本科批约 40 个院校专业组；专科批专业平行志愿',time:'提前批 6 月底分时段填报',line:'以省教育考试院公布为准',lk:'https://www.eeafj.cn'},
+{n:'江西',mode:'院校专业组（3+1+2）',vol:'本科批 45 个院校专业组志愿',time:'6月底',line:'以省教育考试院公布为准',lk:'http://www.jxeea.cn'},
+{n:'山东',mode:'专业(类)+院校（3+3）',vol:'常规批 96 个专业平行志愿',time:'6月底起分多次填报',line:'以省教育招生考试院公布为准',lk:'https://www.sdzk.cn'},
+{n:'河南',mode:'院校专业组（3+1+2）',vol:'本科批 48 个院校专业组 × 6 专业',time:'6月底—7月初',line:'以省招办公布为准',lk:'https://www.heao.com.cn'},
+{n:'湖北',mode:'院校专业组（3+1+2）',vol:'本科批 45 个院校专业组志愿',time:'6月底',line:'以省教育考试院公布为准',lk:'http://www.hbea.edu.cn'},
+{n:'湖南',mode:'院校专业组（3+1+2）',vol:'本科批 45 个院校专业组志愿',time:'6月底',line:'以省教育考试院公布为准',lk:'https://www.hneeb.cn'},
+{n:'广东',mode:'院校专业组（3+1+2）',vol:'本科批 45 个院校专业组 × 6 专业 + 服从调剂',time:'提前批与普通批分时段（6月底起）',line:'2026专科线 150（全国最低档）',lk:'https://eea.gd.gov.cn'},
+{n:'广西',mode:'院校专业组（3+1+2）',vol:'本科批约 40 个院校专业组志愿',time:'6月底',line:'以省招生考试院公布为准',lk:'https://www.gxeea.cn'},
+{n:'海南',mode:'院校专业组（3+3）',vol:'本科批约 24 个院校专业组志愿',time:'6月底',line:'以省考试局公布为准',lk:'http://ea.hainan.gov.cn'},
+{n:'四川',mode:'院校专业组（3+1+2）',vol:'本科批 A段 20 + B段 45；专科批 45',time:'6月底—7月初',line:'以省教育考试院公布为准',lk:'https://www.sceea.cn'},
+{n:'贵州',mode:'专业(类)+院校（3+1+2）',vol:'本科批 96 个专业平行志愿',time:'6月底',line:'专科线保持 200 以上（2026）',lk:'https://www.gzszk.com'},
+{n:'云南',mode:'院校专业组（3+1+2）',vol:'以当年公布为准',time:'6月底',line:'2026特控线：物理 495 / 历史 535',lk:'https://www.ynzs.cn'},
+{n:'西藏',mode:'传统文理（过渡期）',vol:'以当年公布为准',time:'6月底—7月初',line:'以自治区教育考试院公布为准',lk:'http://zsks.edu.xizang.gov.cn'},
+{n:'陕西',mode:'院校专业组（3+1+2）',vol:'本科批 45 个院校专业组；提前批分 5 个小批次',time:'6月底',line:'以省教育考试院公布为准',lk:'https://www.sneea.cn'},
+{n:'甘肃',mode:'院校专业组（3+1+2）',vol:'本科批 45 个院校专业组 × 6 专业 + 服从调剂',time:'6月底',line:'专科线保持 200 以上（2026）',lk:'https://www.ganseea.cn'},
+{n:'青海',mode:'专业(类)+院校',vol:'以当年公布为准',time:'6月底',line:'订单班计划有专门提前段（如邮政/电力订单）',lk:'http://www.qhjyks.com'},
+{n:'宁夏',mode:'院校专业组',vol:'以当年公布为准',time:'6月底',line:'以省教育考试院公布为准',lk:'https://www.nxjyks.cn'},
+{n:'新疆',mode:'传统文理',vol:'本科一批 18 个平行志愿 × 6 专业',time:'6月底—7月初',line:'以自治区教育考试院公布为准',lk:'https://www.xjzk.gov.cn'}
+];
+
+/* ================= 数据：订单班 / 定向项目库 =================
+   sc:[参考最低分,参考最高分]（全国主省份综合，各省差异大，详见 note）
+   subj: physics 物理类 | history 历史类 | both 不限 */
+const P=[
+/* ---- ⚡ 电力能源 ---- */
+{id:1,dom:'电力能源',sch:'华北电力大学(北京)',maj:'电气工程及其自动化',lv:'本科',typ:'就业大户',batch:'本科普通批',partner:'国家电网 / 南方电网 / 五大发电集团',emp:'国企正式工',gte:'无定向协议，走国网统一校招，录用率全国领先',sc:[620,665],subj:'physics',scope:'全国',svc:'无',req:'色盲色弱受限',note:'2025年各省物理类参考，热门省份超特控线60分+',risk:['非订单锁定，需通过国网招聘考试','分数中部省份也常超600'],tip:'电力系统"黄埔军校"，国网校招名额最多的院校'},
+{id:2,dom:'电力能源',sch:'华北电力大学(保定)',maj:'电气工程及其自动化',lv:'本科',typ:'就业大户',batch:'本科普通批',partner:'国家电网 / 发电集团',emp:'国企正式工',gte:'校招为主，进网率略低于北京校区',sc:[595,640],subj:'physics',scope:'全国',svc:'无',req:'—',note:'2025年物理类参考，比北京校区低约20分',risk:['同上，需考国网'],tip:'性价比之选：毕业证与本部一致'},
+{id:3,dom:'电力能源',sch:'上海电力大学',maj:'电气工程及其自动化',lv:'本科',typ:'就业大户',batch:'本科普通批',partner:'国家电网华东分部 / 上海电网',emp:'国企正式工',gte:'华东电网系统认可度极高',sc:[555,610],subj:'physics',scope:'全国',svc:'无',req:'—',note:'2025年参考，上海本地竞争更激烈',risk:['非定向，国网考试择优'],tip:'想进江浙沪电网的，地理优势明显'},
+{id:4,dom:'电力能源',sch:'东北电力大学',maj:'电气工程及其自动化',lv:'本科',typ:'就业大户',batch:'本科普通批',partner:'国家电网各省公司',emp:'国企正式工',gte:'老牌电力院校，国网校招重点站',sc:[530,585],subj:'physics',scope:'全国',svc:'无',req:'—',note:'2025年参考，吉林本省录取分较低',risk:['非定向'],tip:'新中国第一所电力本科，东北/华北电网认可度高'},
+{id:5,dom:'电力能源',sch:'三峡大学',maj:'电气工程及其自动化',lv:'本科',typ:'就业大户',batch:'本科普通批',partner:'国家电网 / 三峡集团',emp:'国企正式工',gte:'国网校招大户（湖北第二）',sc:[528,580],subj:'physics',scope:'全国',svc:'无',req:'—',note:'2025年参考，湖北物理类约550上下',risk:['非定向'],tip:'依托三峡集团，水电方向特色'},
+{id:6,dom:'电力能源',sch:'长沙理工大学',maj:'电气工程及其自动化',lv:'本科',typ:'就业大户',batch:'本科普通批',partner:'国家电网湖南公司 / 五凌电力',emp:'国企正式工',gte:'湖南电网校招主力',sc:[545,595],subj:'physics',scope:'全国',svc:'无',req:'—',note:'2025年参考',risk:['非定向'],tip:'原电力部直属，电气是王牌'},
+{id:7,dom:'电力能源',sch:'南京工程学院',maj:'电气工程及其自动化(输配电)',lv:'本科',typ:'就业大户',batch:'本科普通批',partner:'国家电网江苏公司',emp:'国企正式工',gte:'江苏电网校招人数常年第一（超过部分211）',sc:[525,572],subj:'physics',scope:'全国',svc:'无',req:'—',note:'2025年参考，江苏物理类约540+',risk:['非定向，进网需考试'],tip:'"双非"逆袭典范：江苏电网录用人数全国第一梯队'},
+{id:8,dom:'电力能源',sch:'沈阳工程学院',maj:'电气工程及其自动化',lv:'本科',typ:'就业大户',batch:'本科普通批',partner:'国家电网东北公司',emp:'国企正式工',gte:'东北电网认可度高',sc:[470,522],subj:'physics',scope:'全国',svc:'无',req:'—',note:'2025年参考',risk:['非定向'],tip:'低分进电力系统的本科选择'},
+{id:9,dom:'电力能源',sch:'郑州电力高等专科学校',maj:'供用电技术 / 输配电工程',lv:'专科',typ:'订单班',batch:'专科普通批（部分省提前批）',partner:'国网河南电力公司及地市公司',emp:'国企正式工（合同制为主）',gte:'国网河南校招主力专科，订单班对口培养',sc:[420,480],subj:'physics',scope:'主要河南及周边',svc:'订单班按协议',req:'色盲色弱受限',note:'2025年参考，河南理科专科超本科线现象常见',risk:['部分岗位为劳务派遣，签约前问清','女生岗位少'],tip:'专科进国网的经典通道，河南考生首选'},
+{id:10,dom:'电力能源',sch:'西安电力高等专科学校',maj:'发电厂及电力系统',lv:'专科',typ:'订单班',batch:'专科普通批 / 部分省提前订单段',partner:'国网陕西电力公司（学校由国网陕西管理）',emp:'国企正式工 / 合同制',gte:'国网系统直属专科，陕西订单培养',sc:[415,470],subj:'physics',scope:'主要陕西 / 青海等有订单计划省份',svc:'按订单协议',req:'色盲色弱受限',note:'青海将该校订单计划放提前批⑧段（2026确认）',risk:['订单地区可能为偏远县级供电所'],tip:'"国网亲儿子"，陕西省内电网就业稳'},
+{id:11,dom:'电力能源',sch:'山东电力高等专科学校',maj:'电力系统自动化',lv:'专科',typ:'订单班',batch:'专科普通批',partner:'国网山东电力公司',emp:'国企正式工（部分合同制）',gte:'山东电网定向培养，对口率高',sc:[430,490],subj:'physics',scope:'主要山东',svc:'按订单协议',req:'色盲色弱受限',note:'2025年参考，山东专科分数偏高',risk:['竞争激烈，分数线接近本科线'],tip:'山东电力系统专科"天花板"'},
+{id:12,dom:'电力能源',sch:'武汉电力职业技术学院',maj:'发电厂及电力系统',lv:'专科',typ:'订单班',batch:'专科普通批',partner:'国网湖北 / 发电企业',emp:'合同制为主',gte:'湖北电力系统就业为主',sc:[395,455],subj:'physics',scope:'主要湖北',svc:'按订单协议',req:'色盲色弱受限',note:'2025年参考',risk:['用工性质需逐岗确认'],tip:'华中电网就业通道之一'},
+{id:13,dom:'电力能源',sch:'保定电力职业技术学院',maj:'供用电技术',lv:'专科',typ:'订单班',batch:'专科普通批',partner:'国网河北 / 冀北公司',emp:'合同制为主',gte:'河北电力系统对口培养',sc:[375,435],subj:'physics',scope:'主要河北',svc:'按订单协议',req:'色盲色弱受限',note:'2025年参考',risk:['部分为县级供电所岗位'],tip:'低分进电力系统的选择之一'},
+{id:14,dom:'电力能源',sch:'四川电力职业技术学院',maj:'电力系统自动化（国网订单班）',lv:'专科',typ:'订单班',batch:'专科普通批',partner:'国网四川省电力公司',emp:'国企正式工 / 合同制',gte:'与国网四川深度合作的订单班是特色项目（2026确认）',sc:[400,460],subj:'physics',scope:'主要四川',svc:'按订单协议',req:'色盲色弱受限',note:'2026年报道确认订单班为该校特色',risk:['订单岗位以基层供电所为主'],tip:'四川考生进国网的专科主通道'},
+
+/* ---- 🚄 铁路轨道 ---- */
+{id:15,dom:'铁路轨道',sch:'西南交通大学',maj:'电气工程 / 车辆工程',lv:'本科',typ:'就业大户',batch:'本科普通批',partner:'国铁集团各局 / 中车集团',emp:'国企正式工',gte:'铁路第一校，各铁路局校招核心院校',sc:[605,650],subj:'physics',scope:'全国',svc:'无',req:'部分专业色盲受限',note:'2025年参考',risk:['非定向'],tip:'铁路系统"清华"，分数不够看下一条'},
+{id:16,dom:'铁路轨道',sch:'石家庄铁道大学',maj:'土木工程 / 机械设计（铁道方向）',lv:'本科',typ:'就业大户',batch:'本科普通批',partner:'中铁 / 中铁建各工程局',emp:'国企正式工',gte:'原铁道兵工程学院，工程局校招大户',sc:[522,575],subj:'physics',scope:'全国',svc:'无',req:'—',note:'2025年参考',risk:['工程局需常驻工地，条件艰苦'],tip:'想进中铁系统的本科性价比选择'},
+{id:17,dom:'铁路轨道',sch:'大连交通大学',maj:'车辆工程',lv:'本科',typ:'就业大户',batch:'本科普通批',partner:'中车大连 / 沈阳局 / 大连地铁',emp:'国企正式工',gte:'轨道交通装备行业认可度高',sc:[515,565],subj:'physics',scope:'全国',svc:'无',req:'—',note:'2025年参考',risk:['非定向'],tip:'进中车（造火车）的主力院校'},
+{id:18,dom:'铁路轨道',sch:'华东交通大学',maj:'铁道工程 / 电气工程',lv:'本科',typ:'就业大户',batch:'本科普通批',partner:'南昌局 / 上海局 / 各地铁公司',emp:'国企正式工',gte:'江西铁路就业核心院校',sc:[505,555],subj:'physics',scope:'全国',svc:'无',req:'—',note:'2025年参考',risk:['非定向'],tip:'华东地区铁路系统本科主力'},
+{id:19,dom:'铁路轨道',maj:'交通运输 / 铁道信号',sch:'兰州交通大学',lv:'本科',typ:'就业大户',batch:'本科普通批',partner:'兰州局 / 乌鲁木齐局 / 青藏公司',emp:'国企正式工',gte:'西北铁路系统校招主阵地',sc:[485,535],subj:'physics',scope:'全国',svc:'无',req:'—',note:'2025年参考',risk:['非定向；西北就业为主'],tip:'分数不高但铁路就业率硬核'},
+{id:20,dom:'铁路轨道',sch:'郑州铁路职业技术学院',maj:'铁道机车运用与维护 / 铁道供电',lv:'专科',typ:'订单班',batch:'专科普通批 / 单招',partner:'郑州局集团及省内地铁',emp:'国企正式工（操作技能岗）',gte:'与铁路企业组建订单班，大批进铁路局（2026确认）',sc:[400,465],subj:'physics',scope:'主要河南',svc:'按订单协议',req:'无色盲色弱，部分岗身高要求',note:'2025年参考；订单班分省分专业投档线差异大',risk:['一线岗位倒班、户外作业多','订单未覆盖者自主就业'],tip:'专科进铁路局的头号通道之一'},
+{id:21,dom:'铁路轨道',sch:'西安铁路职业技术学院',maj:'铁道信号自动控制 / 铁道工程',lv:'专科',typ:'订单班',batch:'专科普通批 / 单招',partner:'西安局集团（2025年拟录用该校886人）',emp:'国企正式工（操作技能岗）',gte:'西安局专科录用人数第一（2025年占其专科录用56.8%）',sc:[395,460],subj:'physics',scope:'主要陕西',svc:'按订单协议',req:'无色盲色弱',note:'2025年西安局拟录用2000人中大专1558人，该校886人',risk:['岗位以基层一线为主'],tip:'数据说话：想进西安局，西铁院是"嫡系"'},
+{id:22,dom:'铁路轨道',sch:'武汉铁路职业技术学院',maj:'动车组检修技术 / 铁道机车',lv:'专科',typ:'订单班',batch:'专科普通批',partner:'武汉局集团 / 湖北地铁',emp:'国企正式工（操作技能岗）',gte:'武汉局订单培养主力院校',sc:[405,470],subj:'physics',scope:'主要湖北',svc:'按订单协议',req:'无色盲色弱，机车岗限男生居多',note:'2025年参考',risk:['检修岗夜班多'],tip:'动车组检修是高铁系统紧缺岗'},
+{id:23,dom:'铁路轨道',sch:'南京铁道职业技术学院',maj:'铁道交通运营管理 / 城轨车辆',lv:'专科',typ:'订单班',batch:'专科普通批',partner:'上海局集团 / 南京地铁 / 苏州地铁',emp:'国企正式工 / 地铁正式工',gte:'上海局系统专科录用大户，长三角地铁订单多',sc:[435,500],subj:'physics',scope:'主要江苏及长三角',svc:'按订单协议',req:'无色盲色弱',note:'2025年参考，江苏专科分数偏高',risk:['运营岗需轮班'],tip:'想去长三角地铁/铁路的专科首选，分数也最高'},
+{id:24,dom:'铁路轨道',sch:'广州铁路职业技术学院',maj:'城轨车辆技术 / 铁道供电',lv:'专科',typ:'订单班',batch:'专科普通批',partner:'广州局 / 广州地铁 / 深圳地铁',emp:'国企正式工',gte:'广铁系统和珠三角地铁订单班',sc:[415,480],subj:'physics',scope:'主要广东',svc:'按订单协议',req:'无色盲色弱',note:'2025年参考',risk:['珠三角地铁多为合同制转正式，问清'],tip:'大湾区地铁扩张，用人需求大'},
+{id:25,dom:'铁路轨道',sch:'湖南铁路科技职业技术学院',maj:'铁道机车运用与维护',lv:'专科',typ:'订单班',batch:'专科普通批 / 单招',partner:'广州局 / 南昌局及央企（订单覆盖率超70%，2026确认）',emp:'国企正式工（操作技能岗）',gte:'央企订单班覆盖率超七成',sc:[375,435],subj:'physics',scope:'主要湖南及周边',svc:'按订单协议',req:'无色盲色弱',note:'2026年报道确认订单覆盖率',risk:['部分订单为劳务派遣，逐班确认'],tip:'株洲——中国电力机车之都，产业配套完整'},
+{id:26,dom:'铁路轨道',sch:'湖南铁道职业技术学院',maj:'铁道车辆技术 / 城轨制造',lv:'专科',typ:'订单班',batch:'专科普通批 / 单招',partner:'中车株洲电力机车等轨道交通装备企业',emp:'国企正式工',gte:'中车系装备制造订单为主',sc:[385,450],subj:'physics',scope:'主要湖南',svc:'按订单协议',req:'—',note:'2025年参考',risk:['制造岗倒班'],tip:'想"造火车"进中车的专科通道'},
+{id:27,dom:'铁路轨道',sch:'天津铁道职业技术学院',maj:'铁道工程技术 / 铁道交通运营',lv:'专科',typ:'订单班',batch:'专科普通批',partner:'北京局 / 天津地铁及北方铁路局',emp:'国企正式工（操作技能岗）',gte:'老牌铁路院校（1951年建校），北方局订单',sc:[365,430],subj:'physics',scope:'主要京津冀',svc:'按订单协议',req:'工程岗户外作业',note:'2026年信息确认历史与订单合作',risk:['工程岗流动性强'],tip:'分数友好，京津冀铁路就业'},
+{id:28,dom:'铁路轨道',sch:'柳州铁道职业技术学院',maj:'铁道机车 / 铁道信号',lv:'专科',typ:'订单班',batch:'专科普通批',partner:'南宁局集团 / 广西地铁',emp:'国企正式工（操作技能岗）',gte:'南宁局订单培养主力',sc:[365,425],subj:'physics',scope:'主要广西',svc:'按订单协议',req:'无色盲色弱',note:'2025年参考',risk:['岗位多在广西区内'],tip:'西南省份进铁路的实惠选择'},
+
+/* ---- ✈️ 航空民航 ---- */
+{id:29,dom:'航空民航',sch:'中国民航大学',maj:'飞行技术（运输机驾驶）',lv:'本科',typ:'定向培养',batch:'本科提前批（民航招飞）',partner:'国航 / 东航 / 南航等送培航空公司',emp:'航空公司飞行员（合同制，收入极高）',gte:'委托培养，毕业进入送培航空公司飞行学院训练',sc:[500,565],subj:'both',scope:'全国（按招飞省份数）',svc:'按航司协议，改行成本极高',req:'民航招飞体检（视力、身高、背景调查），英语单科要求',note:'近年最低分约565（2024/2025），文化课最低线为总分60%（约450）',risk:['停飞风险：体检或技术不达标转地面专业','需提前在民航招飞系统报名（高三上学期）'],tip:'大学学费航司承担或补贴，职业回报最高的路径之一'},
+{id:30,dom:'航空民航',sch:'中国民航大学',maj:'交通运输(空中交通管制) / 飞行器动力工程',lv:'本科',typ:'就业大户',batch:'本科普通批',partner:'民航局空管局 / 各航空公司机务系统',emp:'事业单位（空管） / 国企正式工',gte:'民航局直属，空管与机务就业统治级',sc:[540,600],subj:'physics',scope:'全国',svc:'无',req:'空管方向英语及身体条件要求',note:'2025年参考，天津本科批A段约555+',risk:['非定向'],tip:'民航系统"黄埔军校"，不想飞行的最佳选择'},
+{id:31,dom:'航空民航',sch:'中国民用航空飞行学院',maj:'飞行技术',lv:'本科',typ:'定向培养',batch:'本科提前批（民航招飞）',partner:'东航等送培航司（2025福建东航送培投档545）',emp:'航司飞行员',gte:'全球最大飞行训练院校，送培即就业方向',sc:[460,545],subj:'both',scope:'全国（按招飞省份数）',svc:'按航司协议',req:'招飞体检+背景调查，英语95分左右更稳',note:'福建2025东航送培545/位次37957；文化线为总分60%',risk:['停飞风险','招生计划分省分航司，差异大'],tip:'与民航大并列的两大招飞主阵地'},
+{id:32,dom:'航空民航',sch:'中国民用航空飞行学院',maj:'空中交通管理 / 航空机务',lv:'本科',typ:'就业大户',batch:'本科普通批',partner:'民航局空管局 / 川航等',emp:'事业单位 / 国企正式工',gte:'空管、机务、飞行保障就业网络强',sc:[510,570],subj:'physics',scope:'全国',svc:'无',req:'—',note:'2025年参考（贵州历史类527起，各省差异大）',risk:['非定向'],tip:'空管方向的另一核心院校'},
+{id:33,dom:'航空民航',sch:'中国民航大学',maj:'空中乘务',lv:'专科',typ:'订单班',batch:'专科提前批（需面试体检）',partner:'国航 / 东航 / 南航等',emp:'航司乘务员（合同制）',gte:'订单式培养，面试体检合格后按文化分择优',sc:[300,450],subj:'both',scope:'全国',svc:'无（离职按航司规定）',req:'女生164-175cm左右 / 男生174-185cm，矫正视力C字表0.5+，面试+体检',note:'录取比可到1:50，分数不高但综合筛选严',risk:['劳务/合同制，非编制','职业黄金期有限'],tip:'分数要求不高，但形象语言条件是硬门槛'},
+{id:34,dom:'航空民航',sch:'广州民航职业技术学院',maj:'飞机机电设备维修',lv:'专科',typ:'订单班',batch:'专科普通批',partner:'南航 / 白云机场 / 各维修企业',emp:'国企正式工为主',gte:'机务订单班，对口率高',sc:[420,485],subj:'physics',scope:'主要广东及全国',svc:'按订单协议',req:'色盲色弱受限，机务岗体力要求',note:'2025年参考',risk:['机务倒班熬夜'],tip:'民航机务专科第一校，南航嫡系'},
+{id:35,dom:'航空民航',sch:'上海民航职业技术学院',maj:'空中乘务 / 飞机机电设备维修',lv:'专科',typ:'订单班',batch:'专科普通批/提前批',partner:'东航 / 虹桥浦东机场',emp:'国企正式工 / 合同制',gte:'东航与上海机场订单',sc:[425,490],subj:'both',scope:'主要华东',svc:'按订单协议',req:'空乘按民航局体检标准',note:'2025年参考',risk:['岗位分流：机场地服多为派遣'],tip:'留沪民航系统的专科通道'},
+{id:36,dom:'航空民航',sch:'长沙航空职业技术学院',maj:'飞机机电设备维修 / 无人机',lv:'专科',typ:'订单班',batch:'专科普通批',partner:'空军装备部（隶属）+ 军工修理企业',emp:'军队文职方向 / 国企正式工',gte:'隶属空军的军工院校，部队装备修理订单',sc:[395,455],subj:'physics',scope:'全国',svc:'按订单协议',req:'政审，机务体检',note:'2025年参考',risk:['军队方向政审严格'],tip:'军工修理体系就业独特'},
+{id:37,dom:'航空民航',sch:'三亚航空旅游职业学院',maj:'空中乘务 / 民航运输',lv:'专科',typ:'订单班',batch:'专科普通批',partner:'海航系 / 三亚凤凰机场',emp:'合同制为主',gte:'海南民航旅游圈订单',sc:[345,410],subj:'both',scope:'全国',svc:'按订单协议',req:'空乘体貌要求',note:'2025年参考（民办，学费较高）',risk:['民办学费高，海航系用工波动'],tip:'低分+想去民航旅游城市的选项'},
+
+/* ---- 👮 公安司法 ---- */
+{id:38,dom:'公安司法',sch:'中国人民公安大学',maj:'公安学类 / 侦查学',lv:'本科',typ:'定向培养',batch:'本科提前批（政审+体测）',partner:'公安部及全国公安机关',emp:'公务员（公安联考入警）',gte:'公安联考便捷入警，入警率90%+',sc:[590,645],subj:'both',scope:'全国',svc:'最低服务年限按公安机关规定（一般5年）',req:'政审、面试、体检、体能测评；女生比例约10%（分数更高）',note:'2025年最高专业组达645（思想政治组）；男生600左右有戏',risk:['女生分数线显著更高','政审影响全家','公安联考淘汰者自主就业'],tip:'警界最高学府，"共和国警官摇篮"'},
+{id:39,dom:'公安司法',sch:'中国人民警察大学',maj:'移民管理 / 消防指挥 / 警务硕士方向',lv:'本科',typ:'定向培养',batch:'本科提前批',partner:'国家移民管理局 / 消防救援局',emp:'公务员（联考）',gte:'移民管理和消防方向的唯一本科主阵地',sc:[565,620],subj:'both',scope:'全国',svc:'按定向单位规定',req:'政审体测，军人化管理',note:'2025年参考',risk:['边检岗位多在边境','消防岗位职业风险'],tip:'想穿"藏蓝"进移民/消防系统的首选'},
+{id:40,dom:'公安司法',sch:'中国刑事警察学院',maj:'刑事科学技术 / 网络安全与执法',lv:'本科',typ:'定向培养',batch:'本科提前批',partner:'全国公安机关刑侦技术岗位',emp:'公务员（公安联考）',gte:'公安联考入警，技术岗对口强',sc:[555,610],subj:'both',scope:'全国',svc:'按公安机关规定',req:'政审体测',note:'2025年参考',risk:['技术岗对数理能力要求高'],tip:'"东方福尔摩斯摇篮"，刑技第一校'},
+{id:41,dom:'公安司法',sch:'铁道警察学院',maj:'铁路公安（治安学/侦查学）',lv:'本科',typ:'定向培养',batch:'本科提前批',partner:'铁路公安局（各铁路局公安处）',emp:'公务员（公安联考，铁路公安方向）',gte:'铁路公安定向培养，对口入警',sc:[515,570],subj:'both',scope:'全国（按分省计划）',svc:'铁路公安服务年限规定',req:'政审体测；男生为主，女生名额极少',note:'2025年参考',risk:['随警区流动，常驻铁路沿线'],tip:'想当铁路警察（乘警/车站派出所）的直接通道'},
+{id:42,dom:'公安司法',sch:'铁道警察学院',maj:'公安专科专业',lv:'专科',typ:'定向培养',batch:'专科提前批',partner:'铁路公安机关',emp:'公务员（公安联考）',gte:'专科批同样走公安联考入警',sc:[350,450],subj:'both',scope:'部分省份',svc:'按铁路公安规定',req:'政审体测',note:'历史参考：专科提前批分数显著低于本科批',risk:['专科起点晋升慢于本科'],tip:'低分入警的稀缺通道'},
+{id:43,dom:'公安司法',sch:'南京森林警察学院',maj:'治安学 / 侦查学',lv:'本科',typ:'定向培养',batch:'本科提前批',partner:'森林公安 / 地方公安机关 / 长江航运公安',emp:'公务员（公安联考）',gte:'公安联考入警，行业公安特色',sc:[535,590],subj:'both',scope:'全国',svc:'按公安机关规定',req:'政审体测',note:'2025年参考',risk:['行业公安转隶后岗位以地方为主'],tip:'分数略低于公大刑警的部属警校'},
+{id:44,dom:'公安司法',sch:'中央司法警官学院',maj:'监狱学 / 戒毒管理',lv:'本科',typ:'定向培养',batch:'本科提前批',partner:'司法行政系统（监狱/戒毒所）',emp:'公务员（司法警察类，参加司法联考/省考便捷入警）',gte:'司法行政系统对口培养',sc:[515,570],subj:'both',scope:'全国',svc:'司法系统服务年限规定',req:'政审体测，男生比例高',note:'2025年参考',risk:['监狱工作环境封闭','部分省入警需再参加省考'],tip:'"狱警摇篮"，编制稳定'},
+{id:45,dom:'公安司法',sch:'省属本科警院（如浙江警察学院/江苏警官学院/河南警察学院）',maj:'公安学类各专业',lv:'本科',typ:'定向培养',batch:'本科提前批',partner:'本省公安机关（按地市定向）',emp:'公务员（公安联考）',gte:'按地市计划培养，本省入警率常超95%',sc:[505,585],subj:'both',scope:'本省',svc:'一般最低服务5-8年',req:'本省户籍/生源，政审体测，男女分计划',note:'分数因省差异大：浙江/江苏偏高，中西部较低',risk:['定向地市可能为偏远县','服务期内调动难'],tip:'留本省当警察最稳的路，性价比超部属警校'},
+{id:46,dom:'公安司法',sch:'专科警院（如浙江警官职业学院/河北公安警察职业学院）',maj:'公安类专科专业',lv:'专科',typ:'定向培养',batch:'专科提前批',partner:'本省基层公安机关',emp:'公务员（公安联考）',gte:'专科公安专业同样便捷入警',sc:[400,480],subj:'both',scope:'本省',svc:'按本省规定',req:'政审体测，男生为主',note:'部分省份专科公安已停招，以当年计划为准',risk:['学历晋升天花板明显'],tip:'低分入警通道，逐省核对招生'},
+
+/* ---- 🎖️ 军士国防 ---- */
+{id:47,dom:'军士国防',sch:'定向培养军士（全国48所左右高职）',maj:'陆/海/空/火箭军对口专业',lv:'专科',typ:'定向培养',batch:'专科提前批（政审+体检）',partner:'各军种部队（毕业定向入伍任军士）',emp:'现役军人（军士）',gte:'毕业考核合格即办理入伍，任军士（下士起）',sc:[260,440],subj:'both',scope:'全国分省分性别计划',svc:'按现役军人服役规定',req:'政治考核、军检（视力、体能），以男生为主（女生计划极少）',note:'2026年总计划数千人（如福建478人）；分数专科线上择优',risk:['军检淘汰率高','服役期长（至少一个服役期）','训练强度大'],tip:'低分"包分配"性质最强的通道：入伍即现役'},
+{id:48,dom:'军士国防',sch:'北京电子科技职业学院',maj:'定向培养军士（火箭军等）',lv:'专科',typ:'定向培养',batch:'专科提前批',partner:'火箭军等军种',emp:'现役军士',gte:'毕业入伍任军士',sc:[340,420],subj:'both',scope:'部分省份',svc:'按服役规定',req:'政审军检',note:'2026年定向军士招生院校名单内',risk:['分省计划少，波动大'],tip:'首都高职的军士通道'},
+{id:49,dom:'军士国防',sch:'南京信息职业技术学院',maj:'定向培养军士（电子对抗/通信）',lv:'专科',typ:'定向培养',batch:'专科提前批',partner:'战略支援/电子信息类部队',emp:'现役军士',gte:'毕业入伍任军士',sc:[345,430],subj:'both',scope:'部分省份',svc:'按服役规定',req:'政审军检',note:'2026年定向军士招生院校名单内',risk:['技术兵种要求数理基础'],tip:'信息类军士的主力培养校'},
+{id:50,dom:'军士国防',sch:'江苏海事职业技术学院',maj:'定向培养军士（海军航海/轮机）',lv:'专科',typ:'定向培养',batch:'专科提前批',partner:'海军部队',emp:'现役军士',gte:'毕业入伍任海军军士',sc:[315,400],subj:'both',scope:'部分省份',svc:'按服役规定',req:'政审军检+海军体检标准',note:'2026年定向军士招生院校名单内',risk:['舰艇部队长期出海'],tip:'想上舰的海军军士通道'},
+{id:51,dom:'军士国防',sch:'长沙航空职业技术学院（军士方向）',maj:'航空装备类军士',lv:'专科',typ:'定向培养',batch:'专科提前批',partner:'空军 / 陆军航空兵',emp:'现役军士',gte:'毕业入伍任航空机务军士',sc:[380,450],subj:'both',scope:'部分省份',svc:'按服役规定',req:'政审军检',note:'空军依托院校',risk:['机务军士责任重'],tip:'修飞机的军士，技术饭碗'},
+{id:52,dom:'军士国防',sch:'哈尔滨工程大学',maj:'船舶与海洋工程 / 水声工程',lv:'本科',typ:'就业大户',batch:'本科普通批',partner:'中船集团 / 海军装备系统 / 各大船厂',emp:'国企正式工 / 军工单位',gte:'国防七子，船舶军工就业统治级',sc:[570,630],subj:'physics',scope:'全国',svc:'无',req:'国防军工单位政审',note:'2025年参考',risk:['军工单位地域多在沿海厂区'],tip:'造军舰的"国家队"，军工口就业稳'},
+
+/* ---- 🏥 医学卫生 ---- */
+{id:53,dom:'医学卫生',sch:'农村订单定向医学生免费培养（本科，全国项目）',maj:'临床医学 / 中医学（5年制）',lv:'本科',typ:'定向培养',batch:'本科提前批（单列计划、单独划线）',partner:'户籍所在县卫生健康部门 → 乡镇卫生院',emp:'事业编制（服务期满留任）',gte:'免学费+免住宿费+补助，毕业规培后定向入编乡镇卫生院',sc:[450,560],subj:'both',scope:'本省户籍考生',svc:'服务6年（含3年规培）',req:'多为农村户籍要求，签订定向就业协议',note:'2026年安徽等省本科含临床/中医/口腔；分数常低于同校普通批',risk:['违约记录诚信档案+赔偿','服务地多为乡镇，条件有限','本科需先完成规培'],tip:'低分拿编制的黄金通道：用偏远换编制'},
+{id:54,dom:'医学卫生',sch:'农村订单定向医学生（专科，3年制）',maj:'临床医学 / 中医学 / 口腔医学',lv:'专科',typ:'定向培养',batch:'专科提前批',partner:'乡镇卫生院 / 村卫生室',emp:'事业编制或备案制',gte:'免学费住宿，毕业定向基层医疗岗位',sc:[350,450],subj:'both',scope:'本省',svc:'服务3-6年（各省不同）',req:'签订定向协议',note:'2026年安徽确认专科层次含口腔医学',risk:['专科起点晋升慢','助理医师考试压力'],tip:'分数不高+想端医学饭碗的现实选择'},
+{id:55,dom:'医学卫生',sch:'南华大学',maj:'临床医学（衡阳/湖南基层定向）',lv:'本科',typ:'定向培养',batch:'本科提前批',partner:'湖南省各县市区卫健局',emp:'事业编制',gte:'湖南定向医学生主力培养校',sc:[475,535],subj:'both',scope:'湖南',svc:'服务6年',req:'湖南户籍，签协议',note:'2025年参考',risk:['定向到县，需接受基层'],tip:'本部非定向临床分数更高，定向批更实惠'},
+{id:56,dom:'医学卫生',sch:'温州医科大学',maj:'临床医学（浙江基层卫生定向）',lv:'本科',typ:'定向培养',batch:'本科提前批',partner:'浙江省各县市卫健局',emp:'事业编制',gte:'浙江基层卫生人才定向下沉',sc:[545,600],subj:'both',scope:'浙江',svc:'服务5-6年',req:'浙江户籍，签定向协议',note:'2025年参考，浙江定向医学生分数逐年走高',risk:['热门县竞争激烈','违约影响考编'],tip:'浙江省内"带编入学"的代表'},
+
+/* ---- 📮 邮政通信 ---- */
+{id:57,dom:'邮政通信',sch:'石家庄邮电职业技术学院',maj:'邮政通信管理 / 金融保险（邮储方向）订单班',lv:'专科',typ:'订单班',batch:'专科普通批（部分省提前订单段）',partner:'中国邮政集团 + 邮储银行（学校为邮政集团直属）',emp:'国企正式工为主',gte:'"2+1"模式：2年在校+1年企业顶岗，考核合格直接签劳动合同，回定向地区邮政系统',sc:[400,505],subj:'both',scope:'全国有订单计划省份',svc:'按定向就业协议（一般3-5年）',req:'部分岗位形象/身体要求；报考时签定向协议',note:'2025年部分省订单分超本科线最高达112分；青海放提前批⑧段',risk:['订单岗位多在基层网点（乡镇支局）','非订单专业自主就业'],tip:'全国唯一邮政直属高校，"包分配"式就业的明星专科——但分数已不便宜'},
+{id:58,dom:'邮政通信',sch:'重庆邮电大学',maj:'通信工程 / 电子信息',lv:'本科',typ:'就业大户',batch:'本科普通批',partner:'三大运营商 / 华为中兴等设备商',emp:'国企正式工',gte:'信息产业部老底子，运营商校招主力',sc:[535,590],subj:'physics',scope:'全国',svc:'无',req:'—',note:'2025年参考',risk:['非定向','通信行业薪酬分化'],tip:'性价比高的"双非"通信强校'},
+{id:59,dom:'邮政通信',sch:'深圳职业技术大学',maj:'通信技术 / 智能终端',lv:'专科',typ:'就业大户',batch:'专科普通批',partner:'深圳运营商 / 华为产业链企业',emp:'国企/大厂正式工',gte:'深圳就业地理优势+华为ICT学院合作',sc:[475,535],subj:'physics',scope:'主要广东',svc:'无',req:'—',note:'2025年参考，专科分数常年超本科线',risk:['分数高','非定向'],tip:'专科中的"小清华"，就业质量硬'},
+
+/* ---- 📚 师范教育 ---- */
+{id:60,dom:'师范教育',sch:'部属公费师范生（北师大/华东师大等6所）',maj:'师范类各专业',lv:'本科',typ:'定向培养',batch:'本科提前批（国家公费师范生）',partner:'回生源省份中小学任教',emp:'事业编制教师（入编入岗）',gte:'免学费+住宿费+生活补助，毕业直接入编（2024起新政确保编制岗位）',sc:[600,655],subj:'both',scope:'全国',svc:'任教服务6年（可流动到城镇学校需满足年限）',req:'热爱教育事业，签公费教育协议',note:'2025年参考；部属师大普通批通常更高',risk:['违约退费+记诚信档案+影响考编','任教地可能非城区'],tip:'编制教师的"天花板"通道：毕业即入编'},
+{id:61,dom:'师范教育',sch:'省属公费师范生 / 优师专项',maj:'师范类各专业',lv:'本科',typ:'定向培养',batch:'本科提前批',partner:'定向县中小学',emp:'事业编制教师',gte:'免学费住宿，毕业定向县入编任教',sc:[470,560],subj:'both',scope:'本省',svc:'服务6年',req:'本省户籍，签协议；优师专项面向脱贫县/边境县',note:'各省分数差异大，常低于同校普通批',risk:['定向到县及以下学校','履约管理严格'],tip:'中分段拿编制的低成本路径——用"下得去"换编制'},
+{id:62,dom:'师范教育',maj:'学前教育 / 小学教育（地方定向）',sch:'市州定向师范专科（各省幼专/师专）',lv:'专科',typ:'定向培养',batch:'专科提前批',partner:'定向乡镇小学/幼儿园',emp:'事业编制或控制数教师',gte:'乡村教师定向计划',sc:[380,460],subj:'both',scope:'本省',svc:'服务5-6年',req:'签协议，部分要求农村户籍',note:'2025年参考',risk:['乡村任教环境','编制形式各省不同（备案制居多）'],tip:'低分师范定向的兜底选择'},
+
+/* ---- 🛃 海关消防外交 ---- */
+{id:63,dom:'海关消防',sch:'上海海关学院',maj:'海关管理 / 海关稽查',lv:'本科',typ:'定向培养',batch:'本科提前批（需面试）',partner:'海关总署（全国海关系统公务员对口）',emp:'海关公务员（毕业参加国考，专业对口优势极大）',gte:'海关系统定点培养，国考海关岗位面向该校单列',sc:[575,645],subj:'both',scope:'全国',svc:'公务员服务年限规定',req:'面试、体检（身高视力有要求），男女比例限制',note:'2025年天津提前批A段648分进前三十，海关稽查专业走俏',risk:['仍需通过国考（对口岗位竞争小）','入职海关后驻口岸岗位'],tip:'不包分配但"准分配"：海关岗位单列招聘的独苗院校'},
+{id:64,dom:'海关消防',sch:'中国消防救援学院',maj:'消防指挥 / 消防工程',lv:'本科',typ:'定向培养',batch:'本科提前批（政治考核+体格检查）',partner:'国家综合性消防救援队伍',emp:'消防干部（公务员化管理的干部序列）',gte:'毕业按计划分配至消防救援队伍任指挥员',sc:[545,605],subj:'both',scope:'全国',svc:'按队伍规定',req:'政治考核、军检标准体能要求，男生为主',note:'2025年参考',risk:['职业风险高（灭火救援一线）','部队化管理'],tip:'"火焰蓝"干部直通车，需强健体魄'},
+{id:65,dom:'海关消防',sch:'北京电子科技学院',maj:'网络空间安全 / 保密管理',lv:'本科',typ:'定向培养',batch:'本科提前批（政审+面试）',partner:'中央办公厅直属——各级党政机关机要/保密系统',emp:'党政机关公务员（对口分配传统）',gte:'为全国党政机关培养信息化、密码通信人才',sc:[575,640],subj:'physics',scope:'全国（分省计划少）',req:'中共党员（含预备）或共青团员，政审严格，需面试',svc:'按定向与机关规定',note:'2025年参考，小而精',risk:['政审极严','分省名额极少导致分数波动大'],tip:'低调的"编制直通车"，体制内家庭重点关注'},
+{id:66,dom:'海关消防',sch:'国际关系学院',maj:'国际政治 / 法语等',lv:'本科',typ:'定向培养',batch:'本科提前批（政审+面试）',partner:'国家安全系统 / 涉外部门传统对口',emp:'公务员方向（需参加公考，对口优势）',gte:'涉外与安全领域特色培养',sc:[575,635],subj:'both',scope:'全国',svc:'无强制',req:'政审、面试，身体条件要求',note:'2025年参考',risk:['不包分配，公考为主','外语能力要求高'],tip:'"神秘"名校，涉外公务员摇篮'},
+
+/* ---- ⚓ 船舶海事 ---- */
+{id:67,dom:'船舶海事',sch:'大连海事大学',maj:'航海技术 / 轮机工程（海上专业）',lv:'本科',typ:'定向培养',batch:'本科提前批（半军事管理）',partner:'中远海运 / 各航运公司',emp:'国企正式工（高级船员路线）',gte:'交通运输部直属，海员就业率100%量级，资深船长/轮机长年薪可观',sc:[495,555],subj:'physics',scope:'全国',svc:'无强制（离职下船自由，但适任证书需海上资历）',req:'航海类体检：裸眼视力4.6+/矫正4.8、身高、色觉正常；半军事化管理',note:'2025年参考；提前批分数常低于同校普通批',risk:['海上工作枯燥、长期离家','视力不达标一票否决'],tip:'高薪海员的正规军通道：用孤独换高薪'},
+{id:68,dom:'船舶海事',sch:'上海海事大学',maj:'航海技术 / 轮机工程',lv:'本科',typ:'定向培养',batch:'本科提前批',partner:'上海港 / 中远海运 / 国际航运公司',emp:'国企正式工（高级船员/港航管理）',gte:'地处国际航运中心，港航就业网络强',sc:[490,545],subj:'physics',scope:'全国',svc:'无强制',req:'航海类体检标准',note:'2025年参考',risk:['同航海类通用风险'],tip:'想去长三角港航系统的航海类选择'},
+{id:69,dom:'船舶海事',sch:'集美大学',maj:'航海技术 / 轮机工程',lv:'本科',typ:'定向培养',batch:'本科提前批',partner:'各航运公司（福建航运圈认可度极高）',emp:'国企正式工（高级船员）',gte:'百年航海名校，华航圈校友网络密',sc:[475,530],subj:'physics',scope:'全国',svc:'无强制',req:'航海类体检标准',note:'2025年参考',risk:['同上'],tip:'中分段航海类的稳妥选择'}
+];
+
+/* ================= 工具函数 ================= */
+const $=id=>document.getElementById(id);
+const DOMS=[...new Set(P.map(x=>x.dom))];
+const DOM_ICON={'电力能源':'⚡','铁路轨道':'🚄','航空民航':'✈️','公安司法':'👮','军士国防':'🎖️','医学卫生':'🏥','邮政通信':'📮','师范教育':'📚','海关消防':'🛃','船舶海事':'⚓'};
+let cmpList=[],planList=[],selDoms=new Set(),selType='all';
+
+function toast(s){const t=$('toast');t.textContent=s;t.style.display='block';clearTimeout(t._tm);t._tm=setTimeout(()=>t.style.display='none',2200)}
+function scrollToId(id){$('browseSec').classList.add('hidden');document.getElementById(id).scrollIntoView({behavior:'smooth'})}
+function closeM(id){$(id).classList.remove('show')}
+function openM(id){$(id).classList.add('show')}
+
+function empCls(e){
+  if(e.includes('编制')||e.includes('事业'))return'emp';
+  if(e.includes('公务员')||e.includes('现役')||e.includes('军人'))return'emp2';
+  if(e.includes('国企')||e.includes('正式工'))return'emp3';
+  if(e.includes('合同')||e.includes('派遣'))return'emp4';
+  return'';
+}
+
+/* 省份选择器 + 政策卡 */
+function initProv(){
+  $('prov').innerHTML=PROVINCES.map(p=>`<option>${p.n}</option>`).join('');
+  $('prov').onchange=renderPolicy;
+  renderPolicy();
+}
+function curProv(){return PROVINCES.find(p=>p.n===$('prov').value)}
+function renderPolicy(){
+  const p=curProv();
+  $('policyBox').innerHTML=`<div class="policy">
+    <b>📍 ${p.n} · 填报政策速览</b>
+    <div class="row"><span class="tag">${p.mode}</span></div>
+    <div class="row"><span class="tag">志愿设置：${p.vol}</span></div>
+    <div class="row"><span class="tag">填报时间：${p.time}</span></div>
+    <div class="row"><span class="tag">批次线参考：${p.line}</span></div>
+    <div style="margin-top:6px;font-size:12px">官方：<a href="${p.lk}" target="_blank">${p.lk.replace('https://','').replace('http://','')}</a></div>
+  </div>`;
+}
+
+/* 方向chips */
+function initChips(){
+  $('domChips').innerHTML=`<div class="chip on" data-v="">全部</div>`+DOMS.map(d=>`<div class="chip" data-v="${d}">${DOM_ICON[d]||''} ${d}</div>`).join('');
+  $('domChips').querySelectorAll('.chip').forEach(c=>c.onclick=()=>{
+    c.classList.toggle('on');
+    if(c.dataset.v==='')c.classList.remove('on');
+    if(!c.dataset.v){selDoms.clear();$('domChips').querySelectorAll('.chip').forEach(x=>{if(x.dataset.v)x.classList.remove('on')});c.classList.add('on')}
+    else{c.parentElement.querySelector('.chip').classList.remove('on');selDoms.add(c.dataset.v)}
+    if(c.dataset.v&&!c.classList.contains('on'))selDoms.delete(c.dataset.v);
+    if(selDoms.size===0){$('domChips').querySelector('.chip').classList.add('on')}
+  });
+  $('typeChips').querySelectorAll('.chip').forEach(c=>c.onclick=()=>{
+    $('typeChips').querySelectorAll('.chip').forEach(x=>x.classList.remove('on'));
+    c.classList.add('on');selType=c.dataset.v;
+  });
+}
+
+/* 冲稳保分档：gap = 参考最低分 - 考生分 */
+function tierOf(gap){
+  if(gap>=30&&gap<=50)return'chong';       // 录取分高于考生30-50
+  if(gap>=-10&&gap<30)return'wen';          // ±10为稳（10-30视为稳偏冲）
+  if(gap<-10)return'bao';                   // 低于考生20-40为保
+  return null;                              // gap>50 不建议
+}
+const TIER_NAME={chong:'🔴 冲刺',wen:'🟡 稳妥',bao:'🟢 保底'};
+const TIER_DESC={chong:'录取分高于你 30~50 分，值得冲但风险高',wen:'录取分与你相差 ±10 分左右，概率较大',bao:'录取分低于你 20 分以上，把握大'};
+
+function passesFilter(p){
+  if($('level').value!=='all'&&p.lv!==$('level').value)return false;
+  const s=$('subj').value;
+  if(s==='physics'&&p.subj==='history')return false;
+  if(s==='history'&&p.subj==='physics')return false;
+  if(selType!=='all'&&p.typ!==selType)return false;
+  if(selDoms.size>0&&!selDoms.has(p.dom))return false;
+  return true;
+}
+
+function doQuery(silent){
+  const sc=parseInt($('score').value);
+  if(!sc||sc<100||sc>750){if(!silent){toast('请先输入有效分数（100-750）');$('score').focus()}return}
+  $('browseSec').classList.add('hidden');
+  const res={chong:[],wen:[],bao:[]};
+  P.forEach(p=>{
+    if(!passesFilter(p))return;
+    const gap=p.sc[0]-sc, t=tierOf(gap);
+    if(t)res[t].push({p,gap});
+  });
+  ['chong','wen','bao'].forEach(k=>res[k].sort((a,b)=>b.p.sc[0]-a.p.sc[0]));
+  $('sumbar').classList.remove('hidden');
+  $('nC').textContent=res.chong.length;$('nW').textContent=res.wen.length;$('nB').textContent=res.bao.length;
+  let html='';
+  if(!res.chong.length&&!res.wen.length&&!res.bao.length){
+    html=`<div class="card"><div class="empty">没有匹配的项目 😥<br><br>试试：① 放宽「方向/类型」筛选 ② 层次改为「本科+专科」<br>③ 分数在 260-500 区间建议重点关注军士、医学定向、铁路专科</div></div>`;
+  }else{
+    ['chong','wen','bao'].forEach(k=>{
+      if(!res[k].length)return;
+      html+=`<div class="tier"><span class="dot" style="background:var(--${k==='chong'?'chong':k==='wen'?'wen':'bao'})"></span>${TIER_NAME[k]}<small>${TIER_DESC[k]} · ${res[k].length} 个</small></div>`;
+      html+=res[k].map(x=>itemCard(x.p,k)).join('');
+    });
+  }
+  $('resultBox').innerHTML=html;
+  if(!silent)$('resultSec').scrollIntoView({behavior:'smooth'});
+}
+
+function itemCard(p,tier){
+  const inPlan=planList.some(x=>x.id===p.id),inCmp=cmpList.some(x=>x.id===p.id);
+  return`<div class="item ${tier}">
+    <div class="top"><div><h4>${DOM_ICON[p.dom]||''} ${p.sch}</h4><div class="maj">${p.maj} · ${p.lv} · ${p.typ}</div></div>
+    <div class="sc">≈${p.sc[0]}-${p.sc[1]}<div style="font-size:10px;color:var(--txt2);font-weight:400">参考分</div></div></div>
+    <div class="badges">
+      <span class="bd ${empCls(p.emp)}">👷 ${p.emp}</span>
+      <span class="bd lv">${p.lv}</span>
+      <span class="bd">${p.batch}</span>
+      ${p.svc&&p.svc!=='无'&&p.svc!=='—'?`<span class="bd">⏳ ${p.svc}</span>`:''}
+    </div>
+    <div class="acts">
+      <button onclick="showDetail(${p.id})">详情</button>
+      <button class="${inCmp?'main':''}" onclick="toggleCmp(${p.id})">${inCmp?'✓ 已加对比':'+ 对比'}</button>
+      <button class="${inPlan?'main':''}" onclick="togglePlan(${p.id})">${inPlan?'✓ 已入方案':'+ 方案'}</button>
+    </div>
+  </div>`;
+}
+
+/* 详情 */
+function showDetail(id){
+  const p=P.find(x=>x.id===id);
+  $('dTitle').textContent=`${DOM_ICON[p.dom]||''} ${p.sch}`;
+  $('dSub').textContent=`${p.maj} · ${p.lv} · ${p.typ} · ${p.dom}`;
+  $('dBody').innerHTML=`
+    <dt>🤝 合作单位 / 就业去向</dt><dd>${p.partner}</dd>
+    <dt>💼 用工性质</dt><dd><b>${p.emp}</b></dd>
+    <dt>🛡️ 就业保障方式</dt><dd>${p.gte}</dd>
+    <dt>📊 参考分数</dt><dd><b>${p.sc[0]} ~ ${p.sc[1]} 分</b>（${p.note}）</dd>
+    <dt>📦 招生批次</dt><dd>${p.batch}</dd>
+    <dt>📚 选科要求</dt><dd>${p.subj==='physics'?'物理类（理科）':p.subj==='history'?'历史类（文科）':'不限选科'}</dd>
+    <dt>🗺️ 招生范围</dt><dd>${p.scope}</dd>
+    <dt>⏳ 服务年限</dt><dd>${p.svc}</dd>
+    <dt>🩺 报考条件 / 身体要求</dt><dd>${p.req||'—'}</dd>
+    <dt>⚠️ 风险提示</dt><dd><ul>${(p.risk||[]).map(r=>`<li>${r}</li>`).join('')||'<li>详见院校招生章程</li>'}</ul></dd>
+    <dt>💡 点评</dt><dd>${p.tip}</dd>`;
+  const inPlan=planList.some(x=>x.id===p.id),inCmp=cmpList.some(x=>x.id===p.id);
+  $('dActs').innerHTML=`<button onclick="hideDetailAdd(${p.id},'cmp')">${inCmp?'✓ 已加对比':'+ 加入对比'}</button>
+    <button class="main" onclick="hideDetailAdd(${p.id},'plan')">${inPlan?'✓ 已入方案':'+ 加入方案'}</button>`;
+  openM('detailMask');
+}
+function hideDetailAdd(id,t){t==='cmp'?toggleCmp(id):togglePlan(id);closeM('detailMask')}
+
+/* 对比 */
+function toggleCmp(id){
+  const i=cmpList.findIndex(x=>x.id===id);
+  if(i>=0)cmpList.splice(i,1);
+  else{
+    if(cmpList.length>=3){toast('最多对比 3 个项目');return}
+    cmpList.push(P.find(x=>x.id===id));
+  }
+  renderCmpBar();doQuery(true);
+}
+function clearCmp(){cmpList=[];renderCmpBar();doQuery(true)}
+function renderCmpBar(){
+  $('cmpbar').classList.toggle('show',cmpList.length>0);
+  $('cmpbarTxt').innerHTML=`📊 已选 <b>${cmpList.length}/3</b>：`+cmpList.map(p=>`【${p.sch.slice(0,10)}】`).join('');
+}
+function openCmp(){
+  if(cmpList.length<2){toast('至少选择 2 个项目对比');return}
+  const rows=[
+    ['参考分数',p=>`${p.sc[0]}~${p.sc[1]}`],
+    ['层次',p=>p.lv],['类型',p=>p.typ],['领域',p=>p.dom],
+    ['合作单位',p=>p.partner],['用工性质',p=>`<b>${p.emp}</b>`],
+    ['就业保障',p=>p.gte],['服务年限',p=>p.svc],
+    ['报考条件',p=>p.req||'—'],
+    ['风险提示',p=>(p.risk||[]).join('；')||'—'],
+    ['点评',p=>p.tip]
+  ];
+  $('cmpBody').innerHTML=`<table class="cmp"><tr><th>维度</th>${cmpList.map(p=>`<th style="background:#fff;width:auto">${DOM_ICON[p.dom]||''}<br>${p.sch}<br><span style="font-weight:400;color:var(--txt2)">${p.maj}</span></th>`).join('')}</tr>
+  ${rows.map(r=>`<tr><th>${r[0]}</th>${cmpList.map(p=>`<td>${r[1](p)}</td>`).join('')}</tr>`).join('')}</table>`;
+  openM('cmpMask');
+}
+
+/* 模拟方案 */
+function togglePlan(id){
+  const i=planList.findIndex(x=>x.id===id);
+  if(i>=0)planList.splice(i,1);
+  else planList.push(P.find(x=>x.id===id));
+  renderPlan();doQuery(true);
+}
+function renderPlan(){
+  $('planSec').classList.toggle('hidden',planList.length===0);
+  if(!planList.length)return;
+  $('planBox').innerHTML=planList.map((p,i)=>{
+    const sc=parseInt($('score').value)||0;
+    const tier=tierOf(p.sc[0]-sc);
+    const tn=tier==='chong'?'🔴 冲':tier==='wen'?'🟡 稳':tier==='bao'?'🟢 保':'⚪ 观察';
+    return`<div class="planitem"><span>${i+1}. ${p.sch} · ${p.maj} <span class="bd">${tn}</span></span><span class="del" onclick="togglePlan(${p.id})">✕</span></div>`;
+  }).join('');
+  const c=planList.filter(p=>tierOf(p.sc[0]-(parseInt($('score').value)||0))==='chong').length;
+  const w=planList.filter(p=>tierOf(p.sc[0]-(parseInt($('score').value)||0))==='wen').length;
+  const b=planList.filter(p=>tierOf(p.sc[0]-(parseInt($('score').value)||0))==='bao').length;
+  let cls,txt;
+  if(b===0){cls='high';txt=`⚠️ 高风险：方案中没有「保底」项目，一旦冲刺/稳妥全部落空将滑档。建议至少加入 2 个录取分低于你 20 分以上的保底项。`}
+  else if(c>w+b){cls='high';txt=`⚠️ 高风险：冲刺项（${c}个）占比过高，超过稳妥+保底总和，落榜概率大。建议调整为「2冲3稳2保」之类的纺锤形结构。`}
+  else if(b>=2&&c<=3){cls='low';txt=`✅ 低风险：冲刺 ${c} / 稳妥 ${w} / 保底 ${b}，梯度合理，进可攻退可守。注意提前批项目（军警/海关/航海）的政审体检时间节点。`}
+  else{cls='mid';txt=`🟡 中风险：冲刺 ${c} / 稳妥 ${w} / 保底 ${b}。建议再补充 1 个保底项，并对提前批项目预留体检政审失败后的普通批兜底。`}
+  $('riskBox').innerHTML=`<div class="risk ${cls}"><b>方案风险评级</b><br>${txt}</div>`;
+}
+
+/* 浏览全部 */
+function browseAll(){
+  $('resultBox').innerHTML='';$('sumbar').classList.add('hidden');
+  const groups={};
+  P.forEach(p=>{(groups[p.dom]=groups[p.dom]||[]).push(p)});
+  $('browseBox').innerHTML=Object.keys(groups).map(d=>
+    `<div class="bgroup"><h4>${DOM_ICON[d]||''} ${d}（${groups[d].length}）</h4>${groups[d].map(p=>
+      `<div class="item"><div class="top"><div><h4>${p.sch}</h4><div class="maj">${p.maj} · ${p.lv} · ${p.typ}</div></div><div class="sc">≈${p.sc[0]}-${p.sc[1]}</div></div>
+      <div class="badges"><span class="bd ${empCls(p.emp)}">👷 ${p.emp}</span></div>
+      <div class="acts"><button onclick="showDetail(${p.id})">详情</button></div></div>`).join('')}</div>`).join('');
+  $('browseSec').classList.remove('hidden');
+  $('browseSec').scrollIntoView({behavior:'smooth'});
+}
+
+initProv();initChips();
+</script>
+</body>
+</html>
