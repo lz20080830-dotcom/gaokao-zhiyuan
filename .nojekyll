@@ -1,1 +1,1 @@
-nojekyll marker
+# 禁用 Jekyll 处理：保留以下划线开头的构建产物（如 _plugin-vue_export-helper.*.js）

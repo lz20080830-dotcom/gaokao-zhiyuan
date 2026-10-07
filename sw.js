@@ -1,5 +1,5 @@
 // v2: 配合 uni-app 多页面版。导航请求 network-first（保证拿到最新 HTML），带 hash 的静态资源 cache-first。
-const CACHE = 'gzzy-v2';
+const CACHE = 'gzzy-v3';
 
 self.addEventListener('install', (e) => {
   e.waitUntil(caches.open(CACHE).then((c) => c.addAll(['./'])).then(() => self.skipWaiting()));
